@@ -1,60 +1,62 @@
 export default async function handler(req, res) {
 
-  try {
+  if (req.method !== "POST") {
+    return res.status(405).json({ status: "method not allowed" });
+  }
 
-    const data = req.body;
+  const data = req.body;
 
-    const nomor = "2027" + Math.floor(1000 + Math.random() * 9000);
+  const nama = data.nama;
+  let wa = data.wa;
 
-    // 🔥 FORMAT WA (WAJIB BENAR)
-    let wa = String(data.wa).replace(/\D/g, "");
-    if (!wa.startsWith("62")) {
-      wa = "62" + wa.replace(/^0/, "");
-    }
+  // 🔥 FORMAT WA
+  wa = String(wa).replace(/\D/g, '');
+  if (!wa.startsWith("62")) {
+    wa = "62" + wa.replace(/^0/, "");
+  }
 
-    // =========================
-    // PESAN
-    // =========================
-    const pesan = `Halo ${data.nama}
+  const nomor = "2027" + Math.floor(Math.random() * 10000);
+
+  const pesan =
+`Halo ${nama}
 
 Pendaftaran berhasil ✅
+
 No: ${nomor}
 
-Cek kartu:
-https://ppdb-anda.vercel.app/kartu?nama=${encodeURIComponent(data.nama)}&nomor=${nomor}`;
+SMK PUTRA HARAPAN`;
 
-    // =========================
-    // KIRIM WA (FIX)
-    // =========================
+  const token = "cSpu1xCv44Ge8HCLsGBN"; // 🔥 token kamu
+
+  try {
+
+    // 🔥 FIX: pakai fetch versi node
     const response = await fetch("https://api.fonnte.com/send", {
       method: "POST",
       headers: {
-        "Authorization": "ISI_TOKEN_FONNTE",
-        "Content-Type": "application/json"
+        "Authorization": token,
+        "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: JSON.stringify({
+      body: new URLSearchParams({
         target: wa,
         message: pesan
       })
     });
 
-    const result = await response.json();
+    const result = await response.text(); // 🔥 jangan json dulu
+    console.log(result);
 
-    console.log(result); // 🔥 LIHAT DI LOG VERCEL
-
-    res.status(200).json({
-      success: true,
+    return res.status(200).json({
+      status: "ok",
       wa: wa,
       fonnte: result
     });
 
   } catch (error) {
-
     console.log(error);
-
-    res.status(500).json({
-      error: error.toString()
+    return res.status(500).json({
+      status: "error",
+      message: error.toString()
     });
-
   }
 }
