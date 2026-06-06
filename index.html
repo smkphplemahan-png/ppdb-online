@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <title>PPDB SMK PH</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -78,12 +77,12 @@
       <option>Manajemen Perkantoran</option>
     </select>
 
-    <input type="file" name="foto" id="foto" accept="image/*" required>
+    <input type="file" name="foto" accept="image/*" required>
 
     <button type="submit" id="btn">Daftar</button>
   </form>
 
-  <div class="loading" id="loading">Mengirim data...</div>
+  <div class="loading" id="loading">⏳ Mengirim data...</div>
 </div>
 
 <script>
@@ -91,31 +90,60 @@ const form = document.getElementById("form");
 const loading = document.getElementById("loading");
 const btn = document.getElementById("btn");
 
-form.addEventListener("submit", (e) => {
+
+// =====================
+// KOMPRES FOTO (ANTI LEMOT)
+// =====================
+function resizeImage(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e => img.src = e.target.result;
+    reader.readAsDataURL(file);
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      const MAX_WIDTH = 600;
+      const scale = MAX_WIDTH / img.width;
+
+      canvas.width = MAX_WIDTH;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // 🔥 kualitas 0.7 = ringan
+      const compressed = canvas.toDataURL("image/jpeg", 0.7);
+
+      resolve(compressed);
+    };
+  });
+}
+
+
+// =====================
+// SUBMIT FORM
+// =====================
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const formData = new FormData(form);
   const file = formData.get("foto");
 
-  if (!file) {
+  if (!file || file.size === 0) {
     alert("Foto wajib diisi!");
-    return;
-  }
-
-  // 🔥 VALIDASI UKURAN (MAX 1MB)
-  if (file.size > 1024 * 1024) {
-    alert("Ukuran foto maksimal 1MB!");
     return;
   }
 
   loading.style.display = "block";
   btn.disabled = true;
 
-  const reader = new FileReader();
+  try {
 
-  reader.onload = async function () {
-
-    const base64 = reader.result;
+    // 🔥 kompres foto dulu
+    const base64 = await resizeImage(file);
 
     const data = {
       nama: formData.get("nama"),
@@ -129,35 +157,32 @@ form.addEventListener("submit", (e) => {
       foto: base64
     };
 
-    try {
-      const res = await fetch("/api/daftar", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
+    const res = await fetch("/api/daftar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
 
-      const result = await res.json();
+    const result = await res.json();
 
-      loading.style.display = "none";
-      btn.disabled = false;
+    loading.style.display = "none";
+    btn.disabled = false;
 
-      if (result.status === "ok") {
-        alert("Pendaftaran berhasil! Silakan cek WhatsApp");
-        form.reset();
-      } else {
-        alert("Gagal: " + (result.error || "unknown"));
-      }
-
-    } catch (err) {
-      loading.style.display = "none";
-      btn.disabled = false;
-      alert("Server error");
+    if (result.status === "ok") {
+      alert("✅ Pendaftaran berhasil!\nCek WhatsApp Anda");
+      form.reset();
+    } else {
+      alert("❌ Gagal: " + (result.error || "unknown"));
     }
-  };
 
-  reader.readAsDataURL(file);
+  } catch (err) {
+    console.error(err);
+    loading.style.display = "none";
+    btn.disabled = false;
+    alert("❌ Server error / koneksi lambat");
+  }
 });
 </script>
 
