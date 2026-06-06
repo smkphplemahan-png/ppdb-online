@@ -1,69 +1,14 @@
-<!DOCTYPE html>
-<html>
-<body style="font-family:Arial; padding:20px">
+<script>
+const p = new URLSearchParams(window.location.search);
 
-<div style="width:700px;border:3px solid #0a7d3b;padding:15px;background:#f5fff8">
-
-<table width="100%">
-<tr>
-
-<td width="20%">
-<img src="{{logoDinas}}" width="80">
-</td>
-
-<td align="center">
-<div style="font-size:24px;font-weight:bold;color:#0a7d3b">
-KARTU PENDAFTARAN
-</div>
-<div style="font-size:20px;font-weight:bold;color:#0a7d3b">
-SMK PUTRA HARAPAN
-</div>
-<div style="font-size:16px;color:#0a7d3b">
-2027/2028
-</div>
-</td>
-
-<td width="20%" align="right">
-<img src="{{logoSekolah}}" width="80">
-</td>
-
-</tr>
-</table>
-
-<br>
-
-<table width="100%" border="1" cellpadding="10">
-<tr>
-
-<td width="70%">
-<b>No:</b> {{nomor}}<br><br>
-<b>Nama:</b> {{nama}}<br>
-<b>TTL:</b> {{ttl}}<br>
-<b>NISN:</b> {{nisn}}<br>
-<b>NIK:</b> {{nik}}<br>
-<b>Sekolah:</b> {{sekolah}}<br>
-<b>Jurusan:</b> {{jurusan}}
-</td>
-
-<td align="center">
-<div style="width:120px;height:150px;border:2px solid #000">
-FOTO
-</div>
-</td>
-
-</tr>
-</table>
-
-<br>
-
-<table width="100%">
-<tr>
-<td><img src="{{qr}}" width="120"></td>
-<td align="right"><b style="color:orange">Menunggu Verifikasi</b></td>
-</tr>
-</table>
-
-</div>
-
-</body>
-</html>
+document.body.innerHTML = document.body.innerHTML
+.replace("{{nama}}", p.get("nama"))
+.replace("{{nomor}}", p.get("nomor"))
+.replace("{{ttl}}", p.get("ttl"))
+.replace("{{nisn}}", p.get("nisn"))
+.replace("{{nik}}", p.get("nik"))
+.replace("{{sekolah}}", p.get("sekolah"))
+.replace("{{jurusan}}", p.get("jurusan"))
+.replace("{{logoSekolah}}", "https://drive.google.com/uc?export=download&id=1zP9m8KlOnrCmq5G7AGrIeKXu76JrzBNP")
+.replace("{{logoDinas}}", "https://drive.google.com/uc?export=download&id=1UdJW2JnQRQmy2ZROZGfoZ5hUa-VJFFwm");
+</script>
