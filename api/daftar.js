@@ -1,20 +1,22 @@
+import formidable from "formidable";
+import fs from "fs";
+import FormData from "form-data";
+
+export const config = {
+  api: { bodyParser: false }
+};
+
 export default async function handler(req, res) {
-
-  // ✅ CORS FIX
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const data = req.body;
+    const form = formidable({});
+    const [fields, files] = await form.parse(req);
+
+    const data = fields;
+    const file = files.foto[0];
 
     const nomor = "2027" + Math.floor(1000 + Math.random() * 9000);
 
@@ -23,6 +25,20 @@ export default async function handler(req, res) {
       wa = "62" + wa.replace(/^0/, "");
     }
 
+    // 🔥 UPLOAD FOTO
+    const fd = new FormData();
+    fd.append("file", fs.createReadStream(file.filepath));
+    fd.append("upload_preset", "ppdb_upload");
+
+    const upload = await fetch(
+      "https://api.cloudinary.com/v1_1/dldub7baw/image/upload",
+      { method: "POST", body: fd }
+    );
+
+    const up = await upload.json();
+    const fotoUrl = up.secure_url;
+
+    // 🔥 LINK KARTU
     const urlKartu =
       "https://ppdb-online-ashy.vercel.app/kartu.html?" +
       "nama=" + encodeURIComponent(data.nama) +
@@ -31,34 +47,40 @@ export default async function handler(req, res) {
       "&nisn=" + data.nisn +
       "&nik=" + data.nik +
       "&sekolah=" + encodeURIComponent(data.sekolah) +
-      "&jurusan=" + encodeURIComponent(data.jurusan);
+      "&jurusan=" + encodeURIComponent(data.jurusan) +
+      "&foto=" + encodeURIComponent(fotoUrl);
 
-    const imageUrl =
-      "https://image.thum.io/get/width/800/crop/800/" + urlKartu;
+    // 🔥 PDF
+    const pdfUrl =
+      "https://api.html2pdf.app/v1/generate?" +
+      "url=" + encodeURIComponent(urlKartu) +
+      "&apiKey=APIKEY_KAMU";
 
+    // 🔥 KIRIM WA
     await fetch("https://api.fonnte.com/send", {
       method: "POST",
       headers: {
-        Authorization: "cSpu1xCv44Ge8HCLsGBN",
-        "Content-Type": "application/json",
+        Authorization: "TOKEN_KAMU",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         target: wa,
         message:
-          "Halo " + data.nama + "\n\n" +
-          "Pendaftaran berhasil ✅\n\n" +
-          "No: " + nomor + "\n\n" +
-          "📄 Kartu terlampir di bawah ini",
+          `Halo ${data.nama}
 
-        file: imageUrl,
-        filename: nomor + ".jpg",
-      }),
+Pendaftaran berhasil ✅
+No: ${nomor}
+
+📄 Kartu PDF terlampir`,
+        file: pdfUrl,
+        filename: nomor + ".pdf"
+      })
     });
 
-    return res.status(200).json({ status: "ok" });
+    res.status(200).json({ status: "ok" });
 
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "server error" });
+    res.status(500).json({ error: "server error" });
   }
 }
