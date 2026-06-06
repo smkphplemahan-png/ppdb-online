@@ -1,14 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kartu</title>
+
+<style>
+body {
+  font-family: Arial;
+}
+
+.card {
+  width: 700px;
+  border: 3px solid #0a7d3b;
+  padding: 15px;
+  background: #f5fff8;
+}
+
+.header {
+  text-align: center;
+  color: #0a7d3b;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+}
+
+.foto {
+  width: 120px;
+  height: 150px;
+  object-fit: cover;
+  border: 2px solid black;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <table>
+    <tr>
+      <td><img id="logo1" width="70"></td>
+      <td class="header">
+        KARTU PENDAFTARAN<br>
+        SMK PUTRA HARAPAN<br>
+        2027/2028
+      </td>
+      <td align="right"><img id="logo2" width="70"></td>
+    </tr>
+  </table>
+
+  <br>
+
+  <table border="1" cellpadding="8">
+    <tr>
+      <td width="70%">
+        No: <span id="nomor"></span><br><br>
+        Nama: <span id="nama"></span><br>
+        TTL: <span id="ttl"></span><br>
+        NISN: <span id="nisn"></span><br>
+        NIK: <span id="nik"></span><br>
+        Sekolah: <span id="sekolah"></span><br>
+        Jurusan: <span id="jurusan"></span>
+      </td>
+
+      <td align="center">
+        <img id="foto" class="foto">
+      </td>
+    </tr>
+  </table>
+
+</div>
+
 <script>
 const p = new URLSearchParams(window.location.search);
 
-document.body.innerHTML = document.body.innerHTML
-.replace("{{nama}}", p.get("nama"))
-.replace("{{nomor}}", p.get("nomor"))
-.replace("{{ttl}}", p.get("ttl"))
-.replace("{{nisn}}", p.get("nisn"))
-.replace("{{nik}}", p.get("nik"))
-.replace("{{sekolah}}", p.get("sekolah"))
-.replace("{{jurusan}}", p.get("jurusan"))
-.replace("{{logoSekolah}}", "https://drive.google.com/uc?export=download&id=1zP9m8KlOnrCmq5G7AGrIeKXu76JrzBNP")
-.replace("{{logoDinas}}", "https://drive.google.com/uc?export=download&id=1UdJW2JnQRQmy2ZROZGfoZ5hUa-VJFFwm");
+document.getElementById("nama").innerText = p.get("nama");
+document.getElementById("ttl").innerText = p.get("ttl");
+document.getElementById("nisn").innerText = p.get("nisn");
+document.getElementById("nik").innerText = p.get("nik");
+document.getElementById("sekolah").innerText = p.get("sekolah");
+document.getElementById("jurusan").innerText = p.get("jurusan");
+document.getElementById("nomor").innerText = p.get("nomor");
+
+document.getElementById("foto").src = p.get("foto");
+
+// LOGO
+document.getElementById("logo1").src = "https://drive.google.com/uc?export=download&id=1UdJW2JnQRQmy2ZROZGfoZ5hUa-VJFFwm";
+document.getElementById("logo2").src = "https://drive.google.com/uc?export=download&id=1zP9m8KlOnrCmq5G7AGrIeKXu76JrzBNP";
 </script>
+
+</body>
+</html>
