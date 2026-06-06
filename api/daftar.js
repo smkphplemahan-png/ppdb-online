@@ -30,9 +30,21 @@ export default async function handler(req, res) {
     }
 
     // =====================
-    // FOTO (LANGSUNG BASE64)
+    // FOTO (UPLOAD KE CLOUDINARY)
     // =====================
-    const fotoUrl = data.foto; // dari frontend
+    const upload = await fetch(
+      `https://api.cloudinary.com/v1_1/dldub7baw/image/upload`,
+      {
+        method: "POST",
+        body: new URLSearchParams({
+          file: data.foto,
+          upload_preset: "ppdb_upload"
+        })
+      }
+    );
+
+    const uploadResult = await upload.json();
+    const fotoUrl = uploadResult.secure_url;
 
     // =====================
     // LINK KARTU
@@ -49,12 +61,13 @@ export default async function handler(req, res) {
       "&foto=" + encodeURIComponent(fotoUrl);
 
     // =====================
-    // PDF
+    // PDF (PASTIKAN API KEY SUDAH DIGANTI)
     // =====================
     const pdfUrl =
       "https://api.html2pdf.app/v1/generate?" +
       "url=" + encodeURIComponent(urlKartu) +
-      "&apiKey=APIKEY_KAMU";
+      "&apiKey=YOxhkHNaoViEp8mIFhq2NRb20gktwj5eeUIEfqBfxHQmc4Gs4pGPcSvkTeB840vL" +
+      "&delay=2000";
 
     // =====================
     // KIRIM WA
@@ -62,13 +75,13 @@ export default async function handler(req, res) {
     await fetch("https://api.fonnte.com/send", {
       method: "POST",
       headers: {
-        Authorization: "TOKEN_KAMU",
+        Authorization: "cSpu1xCv44Ge8HCLsGBN",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
         target: wa,
         message:
-          `Halo ${data.nama}
+`Halo ${data.nama}
 
 Pendaftaran berhasil ✅
 No: ${nomor}
