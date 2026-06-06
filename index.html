@@ -44,10 +44,15 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      background: gray;
+    }
+
     .loading {
       text-align: center;
       margin-top: 10px;
       display: none;
+      color: #555;
     }
   </style>
 </head>
@@ -74,42 +79,78 @@
 
     <input type="file" name="foto" accept="image/*" required>
 
-    <button type="submit">Daftar</button>
+    <button type="submit" id="btn">Daftar</button>
   </form>
 
   <div class="loading" id="loading">⏳ Mengirim data...</div>
 </div>
 
 <script>
-document.getElementById("form").addEventListener("submit", async (e) => {
+const form = document.getElementById("form");
+const loading = document.getElementById("loading");
+const btn = document.getElementById("btn");
+
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const loading = document.getElementById("loading");
-  loading.style.display = "block";
+  const formData = new FormData(form);
+  const file = formData.get("foto");
 
-  const formData = new FormData(e.target);
-
-  try {
-    const res = await fetch("/api/daftar", {
-      method: "POST",
-      body: formData
-    });
-
-    const result = await res.json();
-
-    loading.style.display = "none";
-
-    if (result.status === "ok") {
-      alert("✅ Pendaftaran berhasil! Cek WhatsApp");
-      e.target.reset();
-    } else {
-      alert("❌ Gagal kirim");
-    }
-
-  } catch (err) {
-    loading.style.display = "none";
-    alert("❌ Server error");
+  if (!file) {
+    alert("Foto wajib diisi!");
+    return;
   }
+
+  loading.style.display = "block";
+  btn.disabled = true;
+
+  const reader = new FileReader();
+
+  reader.onload = async function () {
+
+    const base64 = reader.result;
+
+    const data = {
+      nama: formData.get("nama"),
+      tempat: formData.get("tempat"),
+      tanggal: formData.get("tanggal"),
+      nisn: formData.get("nisn"),
+      nik: formData.get("nik"),
+      sekolah: formData.get("sekolah"),
+      wa: formData.get("wa"),
+      jurusan: formData.get("jurusan"),
+      foto: base64
+    };
+
+    try {
+      const res = await fetch("/api/daftar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+
+      loading.style.display = "none";
+      btn.disabled = false;
+
+      if (result.status === "ok") {
+        alert("✅ Pendaftaran berhasil!\nCek WhatsApp Anda");
+        form.reset();
+      } else {
+        alert("❌ Gagal: " + (result.error || "unknown"));
+      }
+
+    } catch (err) {
+      loading.style.display = "none";
+      btn.disabled = false;
+      alert("❌ Server error");
+    }
+  };
+
+  reader.readAsDataURL(file);
 });
 </script>
 
