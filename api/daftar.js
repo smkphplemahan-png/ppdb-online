@@ -1,43 +1,67 @@
-export default async function handler(req, res) {
+<script>
+const form = document.getElementById("form");
+const loading = document.getElementById("loading");
+const btn = document.getElementById("btn");
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+
+  const data = {
+    nama: formData.get("nama"),
+    tempat: formData.get("tempat"),
+    tanggal: formData.get("tanggal"),
+    nisn: formData.get("nisn"),
+    nik: formData.get("nik"),
+    sekolah: formData.get("sekolah"),
+    wa: formData.get("wa"),
+    jurusan: formData.get("jurusan")
+  };
+
+  loading.style.display = "block";
+  btn.disabled = true;
 
   try {
 
-    // 🔥 FIX: pastikan body ada
-    const data = req.body || {};
+    const res = await fetch("/api/daftar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
 
-    if (!data.nama) {
-      return res.status(400).json({ error: "Data tidak masuk" });
+    // 🔥 FIX PENTING
+    const text = await res.text();
+
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch {
+      throw new Error("Response bukan JSON: " + text);
     }
 
-    const nomor = "2027" + Math.floor(1000 + Math.random() * 9000);
+    loading.style.display = "none";
+    btn.disabled = false;
 
-    const urlKartu =
-      "https://ppdb-online-ashy.vercel.app/kartu.html?" +
-      "nama=" + encodeURIComponent(data.nama || "") +
-      "&nomor=" + nomor +
-      "&ttl=" + encodeURIComponent((data.tempat || "") + ", " + (data.tanggal || "")) +
-      "&nisn=" + (data.nisn || "") +
-      "&nik=" + (data.nik || "") +
-      "&sekolah=" + encodeURIComponent(data.sekolah || "") +
-      "&jurusan=" + encodeURIComponent(data.jurusan || "");
+    if (!res.ok) {
+      throw new Error(result.error || "Server error");
+    }
 
-    console.log("DATA MASUK:", data);
-
-    return res.status(200).json({
-      status: "ok",
-      nomor: nomor,
-      kartu: urlKartu
-    });
+    if (result.status === "ok") {
+      alert("✅ Pendaftaran berhasil!");
+      form.reset();
+    } else {
+      alert("❌ " + result.error);
+    }
 
   } catch (err) {
-    console.error("ERROR FIX:", err);
-    return res.status(500).json({
-      error: "SERVER CRASH",
-      detail: err.message
-    });
+    loading.style.display = "none";
+    btn.disabled = false;
+
+    // 🔥 tampilkan error asli
+    alert("❌ " + err.message);
   }
-}
+});
+</script>
