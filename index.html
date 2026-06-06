@@ -31,7 +31,7 @@ document.getElementById("form").addEventListener("submit", async (e) => {
 
   const data = Object.fromEntries(new FormData(e.target));
 
-  const res = await fetch("/api/daftar", {
+  const res = await fetch("https://ppdb-online-ashy.vercel.app/api/daftar", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify(data)
