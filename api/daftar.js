@@ -63,17 +63,30 @@ export default async function handler(req, res) {
       "&apiKey=YOxhkHNaoViEp8mIFhq2NRb20gktwj5eeUIEfqBfxHQmc4Gs4pGPcSvkTeB840vL" +
       "&delay=2000";
 
-    // =====================
-    // UPLOAD KE GOOGLE DRIVE
-    // =====================
-    const driveRes = await fetch("https://script.google.com/macros/s/AKfycbzd1scVMQOPbezrlpQmq6UQh7ZEhz2-Y3s0pZt3esSy5fiUj4zySQ-LK0d_Ocku1KhO/exec", {
-      method: "POST",
-      body: JSON.stringify({
-        pdf: pdfUrl,
-        nama: data.nama,
-        nomor: nomor
-      })
-    });
+   // =====================
+// KIRIM WA LANGSUNG
+// =====================
+await fetch("https://api.fonnte.com/send", {
+  method: "POST",
+  headers: {
+    Authorization: "cSpu1xCv44Ge8HCLsGBN",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    target: wa,
+    message:
+`Halo ${data.nama}
+
+Pendaftaran berhasil ✅
+No: ${nomor}
+
+📄 Kartu Online:
+${urlKartu}
+
+📥 Download PDF:
+${pdfUrl}`
+  })
+});
 
     const drive = await driveRes.json();
 
