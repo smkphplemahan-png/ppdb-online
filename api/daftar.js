@@ -6,22 +6,26 @@ export default async function handler(req, res) {
 
   try {
 
-    const data = req.body;
+    // 🔥 FIX: pastikan body ada
+    const data = req.body || {};
+
+    if (!data.nama) {
+      return res.status(400).json({ error: "Data tidak masuk" });
+    }
 
     const nomor = "2027" + Math.floor(1000 + Math.random() * 9000);
 
     const urlKartu =
       "https://ppdb-online-ashy.vercel.app/kartu.html?" +
-      "nama=" + encodeURIComponent(data.nama) +
+      "nama=" + encodeURIComponent(data.nama || "") +
       "&nomor=" + nomor +
-      "&ttl=" + encodeURIComponent(data.tempat + ", " + data.tanggal) +
-      "&nisn=" + data.nisn +
-      "&nik=" + data.nik +
-      "&sekolah=" + encodeURIComponent(data.sekolah) +
-      "&jurusan=" + encodeURIComponent(data.jurusan);
+      "&ttl=" + encodeURIComponent((data.tempat || "") + ", " + (data.tanggal || "")) +
+      "&nisn=" + (data.nisn || "") +
+      "&nik=" + (data.nik || "") +
+      "&sekolah=" + encodeURIComponent(data.sekolah || "") +
+      "&jurusan=" + encodeURIComponent(data.jurusan || "");
 
-    // TEST DOANG
-    console.log("BERHASIL:", data.nama);
+    console.log("DATA MASUK:", data);
 
     return res.status(200).json({
       status: "ok",
@@ -30,7 +34,10 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
-    console.error("ERROR:", err);
-    return res.status(500).json({ error: err.message });
+    console.error("ERROR FIX:", err);
+    return res.status(500).json({
+      error: "SERVER CRASH",
+      detail: err.message
+    });
   }
 }
