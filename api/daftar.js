@@ -1,67 +1,65 @@
-<script>
-const form = document.getElementById("form");
-const loading = document.getElementById("loading");
-const btn = document.getElementById("btn");
+export default async function handler(req, res) {
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(form);
-
-  const data = {
-    nama: formData.get("nama"),
-    tempat: formData.get("tempat"),
-    tanggal: formData.get("tanggal"),
-    nisn: formData.get("nisn"),
-    nik: formData.get("nik"),
-    sekolah: formData.get("sekolah"),
-    wa: formData.get("wa"),
-    jurusan: formData.get("jurusan")
-  };
-
-  loading.style.display = "block";
-  btn.disabled = true;
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
 
-    const res = await fetch("/api/daftar", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
+    const data = req.body;
 
-    // 🔥 FIX PENTING
-    const text = await res.text();
+    const nomor = "2027" + Math.floor(1000 + Math.random() * 9000);
 
-    let result;
+    let wa = String(data.wa || "").replace(/\D/g, "");
+    if (!wa.startsWith("62")) {
+      wa = "62" + wa.replace(/^0/, "");
+    }
+
+    const urlKartu =
+      "https://ppdb-online-ashy.vercel.app/kartu.html?" +
+      "nama=" + encodeURIComponent(data.nama) +
+      "&nomor=" + nomor +
+      "&ttl=" + encodeURIComponent(data.tempat + ", " + data.tanggal) +
+      "&nisn=" + data.nisn +
+      "&nik=" + data.nik +
+      "&sekolah=" + encodeURIComponent(data.sekolah) +
+      "&jurusan=" + encodeURIComponent(data.jurusan);
+
+    // =====================
+    // KIRIM WA (AMAN)
+    // =====================
     try {
-      result = JSON.parse(text);
-    } catch {
-      throw new Error("Response bukan JSON: " + text);
+      const waRes = await fetch("https://api.fonnte.com/send", {
+        method: "POST",
+        headers: {
+          Authorization: "cSpu1xCv44Ge8HCLsGBN",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          target: wa,
+          message:
+`Halo ${data.nama}
+
+Pendaftaran berhasil ✅
+No: ${nomor}
+
+📄 Kartu:
+${urlKartu}`
+        })
+      });
+
+      const waText = await waRes.text();
+      console.log("WA:", waText);
+
+    } catch (waErr) {
+      console.log("WA gagal:", waErr.message);
     }
 
-    loading.style.display = "none";
-    btn.disabled = false;
-
-    if (!res.ok) {
-      throw new Error(result.error || "Server error");
-    }
-
-    if (result.status === "ok") {
-      alert("✅ Pendaftaran berhasil!");
-      form.reset();
-    } else {
-      alert("❌ " + result.error);
-    }
+    // tetap sukses walau WA gagal
+    return res.status(200).json({ status: "ok" });
 
   } catch (err) {
-    loading.style.display = "none";
-    btn.disabled = false;
-
-    // 🔥 tampilkan error asli
-    alert("❌ " + err.message);
+    console.error("ERROR SERVER:", err);
+    return res.status(500).json({ error: err.message });
   }
-});
-</script>
+}
