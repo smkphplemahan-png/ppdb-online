@@ -1,43 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>PPDB SMK PH</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PPDB SMK Putra Harapan</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f7f5;
+  margin: 0;
+}
+
+.container {
+  max-width: 420px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #0a7d3b;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: #0a7d3b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #086a31;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 10px;
+  display: none;
+  color: #555;
+}
+</style>
+
 </head>
 <body>
 
-<h2>Form Pendaftaran</h2>
+<div class="container">
 
-<form id="form">
-  <input name="nama" placeholder="Nama"><br><br>
-  <input name="tempat" placeholder="Tempat Lahir"><br><br>
-  <input type="date" name="tanggal"><br><br>
-  <input name="nisn" placeholder="NISN"><br><br>
-  <input name="nik" placeholder="NIK"><br><br>
-  <input name="sekolah" placeholder="Asal Sekolah"><br><br>
-  <input name="wa" placeholder="No WA"><br><br>
+  <h2>Form Pendaftaran</h2>
 
-  <select name="jurusan">
-    <option>Manajemen Perkantoran</option>
-    <option>Teknik Ketenagalistrikan</option>
-    <option>Teknik Sepeda Motor</option>
-  </select><br><br>
+  <form id="form">
 
-  <button type="submit">Daftar</button>
-</form>
+    <input name="nama" placeholder="Nama Lengkap" required>
+    <input name="tempat" placeholder="Tempat Lahir" required>
+    <input type="date" name="tanggal" required>
+    <input name="nisn" placeholder="NISN" required>
+    <input name="nik" placeholder="NIK" required>
+    <input name="sekolah" placeholder="Asal Sekolah" required>
+    <input name="wa" placeholder="No WhatsApp (08xxxx)" required>
+
+    <select name="jurusan" required>
+      <option value="">-- Pilih Jurusan --</option>
+      <option>Teknik Sepeda Motor</option>
+      <option>Teknik Ketenagalistrikan</option>
+      <option>Manajemen Perkantoran</option>
+    </select>
+
+    <button type="submit">Daftar</button>
+
+  </form>
+
+  <div class="loading" id="loading">⏳ Mengirim data...</div>
+
+</div>
 
 <script>
 document.getElementById("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const loading = document.getElementById("loading");
+  loading.style.display = "block";
+
   const data = Object.fromEntries(new FormData(e.target));
 
-  const res = await fetch("https://ppdb-online-ashy.vercel.app/api/daftar", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(data)
-  });
+  try {
+    const res = await fetch("https://ppdb-online-ashy.vercel.app/api/daftar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
 
-  alert("Pendaftaran berhasil!");
+    const result = await res.json();
+
+    loading.style.display = "none";
+
+    if (result.status === "ok") {
+      alert("✅ Pendaftaran berhasil!\nCek WhatsApp Anda");
+      document.getElementById("form").reset();
+    } else {
+      alert("❌ Gagal kirim WA");
+    }
+
+  } catch (err) {
+    console.error(err);
+    loading.style.display = "none";
+    alert("❌ Server error");
+  }
 });
 </script>
 
