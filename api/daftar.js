@@ -18,9 +18,6 @@ export default async function handler(req, res) {
 
     const nomor = "2027" + Math.floor(1000 + Math.random() * 9000);
 
-    // =====================
-    // FORMAT WA
-    // =====================
     let wa = String(data.wa).replace(/\D/g, "");
     if (!wa.startsWith("62")) {
       wa = "62" + wa.replace(/^0/, "");
@@ -58,7 +55,7 @@ export default async function handler(req, res) {
       "&foto=" + encodeURIComponent(fotoUrl);
 
     // =====================
-    // PDF LINK (LANGSUNG)
+    // PDF URL
     // =====================
     const pdfUrl =
       "https://api.html2pdf.app/v1/generate?" +
@@ -67,7 +64,27 @@ export default async function handler(req, res) {
       "&delay=2000";
 
     // =====================
-    // KIRIM WA (LINK)
+    // UPLOAD KE GOOGLE DRIVE
+    // =====================
+    const driveRes = await fetch("https://script.google.com/macros/s/AKfycbzd1scVMQOPbezrlpQmq6UQh7ZEhz2-Y3s0pZt3esSy5fiUj4zySQ-LK0d_Ocku1KhO/exec", {
+      method: "POST",
+      body: JSON.stringify({
+        pdf: pdfUrl,
+        nama: data.nama,
+        nomor: nomor
+      })
+    });
+
+    const drive = await driveRes.json();
+
+    if (drive.status !== "ok") {
+      throw new Error("Upload Drive gagal");
+    }
+
+    const linkDrive = drive.link;
+
+    // =====================
+    // KIRIM WA
     // =====================
     await fetch("https://api.fonnte.com/send", {
       method: "POST",
@@ -84,9 +101,7 @@ Pendaftaran berhasil ✅
 No: ${nomor}
 
 📄 Download kartu:
-${pdfUrl}
-
-Simpan file ini ya`
+${linkDrive}`
       })
     });
 
