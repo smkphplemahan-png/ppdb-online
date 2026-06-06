@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>PPDB SMK Putra Harapan</title>
+<title>PPDB SMK PH</title>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #f2f7f5;
-  margin: 0;
+  font-family: Arial;
+  background: #eef5f1;
 }
 
 .container {
@@ -33,7 +31,6 @@ input, select {
   margin-top: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
 }
 
 button {
@@ -44,60 +41,48 @@ button {
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
   cursor: pointer;
-}
-
-button:hover {
-  background: #086a31;
 }
 
 .loading {
   text-align: center;
-  margin-top: 10px;
   display: none;
-  color: #555;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
+<h2>Form Pendaftaran</h2>
 
-  <h2>Form Pendaftaran</h2>
+<form id="form">
+<input name="nama" placeholder="Nama" required>
+<input name="tempat" placeholder="Tempat Lahir" required>
+<input type="date" name="tanggal" required>
+<input name="nisn" placeholder="NISN" required>
+<input name="nik" placeholder="NIK" required>
+<input name="sekolah" placeholder="Asal Sekolah" required>
+<input name="wa" placeholder="No WA" required>
 
-  <form id="form">
+<select name="jurusan" required>
+<option value="">-- Pilih Jurusan --</option>
+<option>Teknik Sepeda Motor</option>
+<option>Teknik Ketenagalistrikan</option>
+<option>Manajemen Perkantoran</option>
+</select>
 
-    <input name="nama" placeholder="Nama Lengkap" required>
-    <input name="tempat" placeholder="Tempat Lahir" required>
-    <input type="date" name="tanggal" required>
-    <input name="nisn" placeholder="NISN" required>
-    <input name="nik" placeholder="NIK" required>
-    <input name="sekolah" placeholder="Asal Sekolah" required>
-    <input name="wa" placeholder="No WhatsApp (08xxxx)" required>
+<button type="submit">Daftar</button>
+</form>
 
-    <select name="jurusan" required>
-      <option value="">-- Pilih Jurusan --</option>
-      <option>Teknik Sepeda Motor</option>
-      <option>Teknik Ketenagalistrikan</option>
-      <option>Manajemen Perkantoran</option>
-    </select>
-
-    <button type="submit">Daftar</button>
-
-  </form>
-
-  <div class="loading" id="loading">⏳ Mengirim data...</div>
-
+<div class="loading" id="loading">⏳ Mengirim...</div>
 </div>
 
 <script>
 document.getElementById("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const loading = document.getElementById("loading");
-  loading.style.display = "block";
+  document.getElementById("loading").style.display = "block";
 
   const data = Object.fromEntries(new FormData(e.target));
 
@@ -112,18 +97,16 @@ document.getElementById("form").addEventListener("submit", async (e) => {
 
     const result = await res.json();
 
-    loading.style.display = "none";
+    document.getElementById("loading").style.display = "none";
 
     if (result.status === "ok") {
-      alert("✅ Pendaftaran berhasil!\nCek WhatsApp Anda");
-      document.getElementById("form").reset();
+      alert("✅ Pendaftaran berhasil! Cek WA");
+      e.target.reset();
     } else {
       alert("❌ Gagal kirim WA");
     }
 
   } catch (err) {
-    console.error(err);
-    loading.style.display = "none";
     alert("❌ Server error");
   }
 });
