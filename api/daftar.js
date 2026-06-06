@@ -1,78 +1,50 @@
-import https from "https";
-
 export default async function handler(req, res) {
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ status: "method not allowed" });
+  // 🔥 HANDLE CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // 🔥 HANDLE PREFLIGHT
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
   }
 
   try {
 
     const data = req.body;
 
-    const nama = data.nama || "-";
-    let wa = data.wa || "";
-
-    // 🔥 FORMAT NOMOR WA
-    wa = String(wa).replace(/\D/g, '');
+    let wa = String(data.wa).replace(/\D/g, '');
     if (!wa.startsWith("62")) {
       wa = "62" + wa.replace(/^0/, "");
     }
 
-    const nomor = "2027" + Math.floor(Math.random() * 10000);
-
     const pesan =
-`Halo ${nama}
+      "Halo " + data.nama + "\n\n" +
+      "Pendaftaran berhasil ✅\n\n" +
+      "Terima kasih.";
 
-Pendaftaran berhasil ✅
-
-No: ${nomor}
-
-SMK PUTRA HARAPAN`;
-
-    const postData = new URLSearchParams({
-      target: wa,
-      message: pesan
-    }).toString();
-
-    const options = {
-      hostname: "api.fonnte.com",
-      path: "/send",
+    const response = await fetch("https://api.fonnte.com/send", {
       method: "POST",
       headers: {
         "Authorization": "cSpu1xCv44Ge8HCLsGBN",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Content-Length": postData.length
-      }
-    };
-
-    const request = https.request(options, (response) => {
-      let data = "";
-
-      response.on("data", chunk => {
-        data += chunk;
-      });
-
-      response.on("end", () => {
-        console.log("Fonnte:", data);
-
-        return res.status(200).json({
-          status: "ok",
-          result: data
-        });
-      });
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        target: wa,
+        message: pesan
+      })
     });
 
-    request.on("error", (error) => {
-      console.log("ERROR:", error);
-      return res.status(500).json({ status: "error" });
-    });
+    const result = await response.json();
 
-    request.write(postData);
-    request.end();
+    return res.status(200).json({
+      status: "ok",
+      result: result
+    });
 
   } catch (err) {
-    console.log("CATCH ERROR:", err);
+    console.log(err);
     return res.status(500).json({ status: "error" });
   }
 }
