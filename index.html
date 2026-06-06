@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>PPDB SMK PH</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -77,12 +78,12 @@
       <option>Manajemen Perkantoran</option>
     </select>
 
-    <input type="file" name="foto" accept="image/*" required>
+    <input type="file" name="foto" id="foto" accept="image/*" required>
 
     <button type="submit" id="btn">Daftar</button>
   </form>
 
-  <div class="loading" id="loading">⏳ Mengirim data...</div>
+  <div class="loading" id="loading">Mengirim data...</div>
 </div>
 
 <script>
@@ -98,6 +99,12 @@ form.addEventListener("submit", (e) => {
 
   if (!file) {
     alert("Foto wajib diisi!");
+    return;
+  }
+
+  // 🔥 VALIDASI UKURAN (MAX 1MB)
+  if (file.size > 1024 * 1024) {
+    alert("Ukuran foto maksimal 1MB!");
     return;
   }
 
@@ -137,16 +144,16 @@ form.addEventListener("submit", (e) => {
       btn.disabled = false;
 
       if (result.status === "ok") {
-        alert("✅ Pendaftaran berhasil!\nCek WhatsApp Anda");
+        alert("Pendaftaran berhasil! Silakan cek WhatsApp");
         form.reset();
       } else {
-        alert("❌ Gagal: " + (result.error || "unknown"));
+        alert("Gagal: " + (result.error || "unknown"));
       }
 
     } catch (err) {
       loading.style.display = "none";
       btn.disabled = false;
-      alert("❌ Server error");
+      alert("Server error");
     }
   };
 
