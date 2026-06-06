@@ -1,112 +1,113 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PPDB SMK PH</title>
+  <title>PPDB SMK PH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style>
-body {
-  font-family: Arial;
-  background: #eef5f1;
-}
+  <style>
+    body {
+      font-family: Arial;
+      background: #eef5f1;
+    }
 
-.container {
-  max-width: 420px;
-  margin: 40px auto;
-  background: #fff;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
 
-h2 {
-  text-align: center;
-  color: #0a7d3b;
-}
+    h2 {
+      text-align: center;
+      color: #0a7d3b;
+    }
 
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
 
-button {
-  width: 100%;
-  margin-top: 15px;
-  padding: 12px;
-  background: #0a7d3b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      background: #0a7d3b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-.loading {
-  text-align: center;
-  display: none;
-}
-</style>
+    .loading {
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="container">
-<h2>Form Pendaftaran</h2>
+  <h2>Form Pendaftaran</h2>
 
-<form id="form">
-<input name="nama" placeholder="Nama" required>
-<input name="tempat" placeholder="Tempat Lahir" required>
-<input type="date" name="tanggal" required>
-<input name="nisn" placeholder="NISN" required>
-<input name="nik" placeholder="NIK" required>
-<input name="sekolah" placeholder="Asal Sekolah" required>
-<input name="wa" placeholder="No WA" required>
+  <form id="form">
+    <input name="nama" placeholder="Nama" required>
+    <input name="tempat" placeholder="Tempat Lahir" required>
+    <input type="date" name="tanggal" required>
+    <input name="nisn" placeholder="NISN" required>
+    <input name="nik" placeholder="NIK" required>
+    <input name="sekolah" placeholder="Asal Sekolah" required>
+    <input name="wa" placeholder="No WA" required>
 
-<select name="jurusan" required>
-<option value="">-- Pilih Jurusan --</option>
-<option>Teknik Sepeda Motor</option>
-<option>Teknik Ketenagalistrikan</option>
-<option>Manajemen Perkantoran</option>
-</select>
+    <select name="jurusan">
+      <option>Teknik Sepeda Motor</option>
+      <option>Teknik Ketenagalistrikan</option>
+      <option>Manajemen Perkantoran</option>
+    </select>
 
-<button type="submit">Daftar</button>
-</form>
+    <input type="file" name="foto" accept="image/*" required>
 
-<div class="loading" id="loading">⏳ Mengirim...</div>
+    <button type="submit">Daftar</button>
+  </form>
+
+  <div class="loading" id="loading">⏳ Mengirim data...</div>
 </div>
 
 <script>
 document.getElementById("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  document.getElementById("loading").style.display = "block";
+  const loading = document.getElementById("loading");
+  loading.style.display = "block";
 
-  const data = Object.fromEntries(new FormData(e.target));
+  const formData = new FormData(e.target);
 
   try {
-    const res = await fetch("https://ppdb-online-ashy.vercel.app/api/daftar", {
+    const res = await fetch("/api/daftar", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+      body: formData
     });
 
     const result = await res.json();
 
-    document.getElementById("loading").style.display = "none";
+    loading.style.display = "none";
 
     if (result.status === "ok") {
-      alert("✅ Pendaftaran berhasil! Cek WA");
+      alert("✅ Pendaftaran berhasil! Cek WhatsApp");
       e.target.reset();
     } else {
-      alert("❌ Gagal kirim WA");
+      alert("❌ Gagal kirim");
     }
 
   } catch (err) {
+    loading.style.display = "none";
     alert("❌ Server error");
   }
 });
