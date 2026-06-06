@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     // =====================
     // KIRIM WA (SAFE MODE)
     // =====================
-    const waRes = await fetch("https://api.fonnte.com/send", {
+    //const waRes = await fetch("https://api.fonnte.com/send", {
       method: "POST",
       headers: {
         Authorization: "cSpu1xCv44Ge8HCLsGBN",
