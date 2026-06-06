@@ -25,7 +25,10 @@ export default async function handler(req, res) {
       "&sekolah=" + encodeURIComponent(data.sekolah) +
       "&jurusan=" + encodeURIComponent(data.jurusan);
 
-    await fetch("https://api.fonnte.com/send", {
+    // =====================
+    // KIRIM WA (SAFE MODE)
+    // =====================
+    const waRes = await fetch("https://api.fonnte.com/send", {
       method: "POST",
       headers: {
         Authorization: "cSpu1xCv44Ge8HCLsGBN",
@@ -39,15 +42,19 @@ export default async function handler(req, res) {
 Pendaftaran berhasil ✅
 No: ${nomor}
 
-📄 Kartu Anda:
+📄 Kartu:
 ${urlKartu}`
       })
     });
 
+    const waResult = await waRes.text(); // ⬅️ penting
+    console.log("Fonnte:", waResult);
+
+    // ❗ jangan bikin gagal walau WA error
     return res.status(200).json({ status: "ok" });
 
   } catch (err) {
-    console.error(err);
+    console.error("ERROR BESAR:", err);
     return res.status(500).json({ error: err.message });
   }
 }
