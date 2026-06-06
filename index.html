@@ -52,7 +52,6 @@
       text-align: center;
       margin-top: 10px;
       display: none;
-      color: #555;
     }
   </style>
 </head>
@@ -77,8 +76,6 @@
       <option>Manajemen Perkantoran</option>
     </select>
 
-    <input type="file" name="foto" accept="image/*" required>
-
     <button type="submit" id="btn">Daftar</button>
   </form>
 
@@ -90,73 +87,26 @@ const form = document.getElementById("form");
 const loading = document.getElementById("loading");
 const btn = document.getElementById("btn");
 
-
-// =====================
-// KOMPRES FOTO (ANTI LEMOT)
-// =====================
-function resizeImage(file) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    const reader = new FileReader();
-
-    reader.onload = e => img.src = e.target.result;
-    reader.readAsDataURL(file);
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-
-      const MAX_WIDTH = 600;
-      const scale = MAX_WIDTH / img.width;
-
-      canvas.width = MAX_WIDTH;
-      canvas.height = img.height * scale;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      // 🔥 kualitas 0.7 = ringan
-      const compressed = canvas.toDataURL("image/jpeg", 0.7);
-
-      resolve(compressed);
-    };
-  });
-}
-
-
-// =====================
-// SUBMIT FORM
-// =====================
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const formData = new FormData(form);
-  const file = formData.get("foto");
 
-  if (!file || file.size === 0) {
-    alert("Foto wajib diisi!");
-    return;
-  }
+  const data = {
+    nama: formData.get("nama"),
+    tempat: formData.get("tempat"),
+    tanggal: formData.get("tanggal"),
+    nisn: formData.get("nisn"),
+    nik: formData.get("nik"),
+    sekolah: formData.get("sekolah"),
+    wa: formData.get("wa"),
+    jurusan: formData.get("jurusan")
+  };
 
   loading.style.display = "block";
   btn.disabled = true;
 
   try {
-
-    // 🔥 kompres foto dulu
-    const base64 = await resizeImage(file);
-
-    const data = {
-      nama: formData.get("nama"),
-      tempat: formData.get("tempat"),
-      tanggal: formData.get("tanggal"),
-      nisn: formData.get("nisn"),
-      nik: formData.get("nik"),
-      sekolah: formData.get("sekolah"),
-      wa: formData.get("wa"),
-      jurusan: formData.get("jurusan"),
-      foto: base64
-    };
-
     const res = await fetch("/api/daftar", {
       method: "POST",
       headers: {
@@ -174,14 +124,13 @@ form.addEventListener("submit", async (e) => {
       alert("✅ Pendaftaran berhasil!\nCek WhatsApp Anda");
       form.reset();
     } else {
-      alert("❌ Gagal: " + (result.error || "unknown"));
+      alert("❌ Gagal: " + result.error);
     }
 
   } catch (err) {
-    console.error(err);
     loading.style.display = "none";
     btn.disabled = false;
-    alert("❌ Server error / koneksi lambat");
+    alert("❌ Server error");
   }
 });
 </script>
