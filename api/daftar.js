@@ -18,6 +18,9 @@ export default async function handler(req, res) {
 
     const nomor = "2027" + Math.floor(1000 + Math.random() * 9000);
 
+    // =====================
+    // FORMAT WA
+    // =====================
     let wa = String(data.wa).replace(/\D/g, "");
     if (!wa.startsWith("62")) {
       wa = "62" + wa.replace(/^0/, "");
@@ -38,11 +41,6 @@ export default async function handler(req, res) {
     );
 
     const up = await upload.json();
-
-    if (!up.secure_url) {
-      throw new Error("Upload gagal");
-    }
-
     const fotoUrl = up.secure_url;
 
     // =====================
@@ -60,7 +58,16 @@ export default async function handler(req, res) {
       "&foto=" + encodeURIComponent(fotoUrl);
 
     // =====================
-    // KIRIM WA (TANPA PDF DULU)
+    // PDF LINK (LANGSUNG)
+    // =====================
+    const pdfUrl =
+      "https://api.html2pdf.app/v1/generate?" +
+      "url=" + encodeURIComponent(urlKartu) +
+      "&apiKey=YOxhkHNaoViEp8mIFhq2NRb20gktwj5eeUIEfqBfxHQmc4Gs4pGPcSvkTeB840vL" +
+      "&delay=2000";
+
+    // =====================
+    // KIRIM WA (LINK)
     // =====================
     await fetch("https://api.fonnte.com/send", {
       method: "POST",
@@ -76,8 +83,10 @@ export default async function handler(req, res) {
 Pendaftaran berhasil ✅
 No: ${nomor}
 
-🔗 Lihat kartu:
-${urlKartu}`
+📄 Download kartu:
+${pdfUrl}
+
+Simpan file ini ya`
       })
     });
 
