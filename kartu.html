@@ -1,94 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Kartu</title>
+  <title>Kartu PPDB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style>
-body {
-  font-family: Arial;
-}
+  <style>
+    body {
+      font-family: Arial;
+      background: #eef5f1;
+      text-align: center;
+    }
 
-.card {
-  width: 700px;
-  border: 3px solid #0a7d3b;
-  padding: 15px;
-  background: #f5fff8;
-}
+    .card {
+      width: 350px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
 
-.header {
-  text-align: center;
-  color: #0a7d3b;
-  font-weight: bold;
-}
+    h2 {
+      color: #0a7d3b;
+    }
 
-table {
-  width: 100%;
-}
+    .item {
+      text-align: left;
+      margin-top: 10px;
+    }
 
-.foto {
-  width: 120px;
-  height: 150px;
-  object-fit: cover;
-  border: 2px solid black;
-}
-</style>
+    .label {
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="card">
+  <h2>Kartu Peserta PPDB</h2>
 
-  <table>
-    <tr>
-      <td><img id="logo1" width="70"></td>
-      <td class="header">
-        KARTU PENDAFTARAN<br>
-        SMK PUTRA HARAPAN<br>
-        2027/2028
-      </td>
-      <td align="right"><img id="logo2" width="70"></td>
-    </tr>
-  </table>
-
-  <br>
-
-  <table border="1" cellpadding="8">
-    <tr>
-      <td width="70%">
-        No: <span id="nomor"></span><br><br>
-        Nama: <span id="nama"></span><br>
-        TTL: <span id="ttl"></span><br>
-        NISN: <span id="nisn"></span><br>
-        NIK: <span id="nik"></span><br>
-        Sekolah: <span id="sekolah"></span><br>
-        Jurusan: <span id="jurusan"></span>
-      </td>
-
-      <td align="center">
-        <img id="foto" class="foto">
-      </td>
-    </tr>
-  </table>
-
+  <div class="item"><span class="label">No:</span> <span id="nomor"></span></div>
+  <div class="item"><span class="label">Nama:</span> <span id="nama"></span></div>
+  <div class="item"><span class="label">TTL:</span> <span id="ttl"></span></div>
+  <div class="item"><span class="label">NISN:</span> <span id="nisn"></span></div>
+  <div class="item"><span class="label">NIK:</span> <span id="nik"></span></div>
+  <div class="item"><span class="label">Sekolah:</span> <span id="sekolah"></span></div>
+  <div class="item"><span class="label">Jurusan:</span> <span id="jurusan"></span></div>
 </div>
 
 <script>
-const p = new URLSearchParams(window.location.search);
+const url = new URLSearchParams(window.location.search);
 
-document.getElementById("nama").innerText = p.get("nama");
-document.getElementById("ttl").innerText = p.get("ttl");
-document.getElementById("nisn").innerText = p.get("nisn");
-document.getElementById("nik").innerText = p.get("nik");
-document.getElementById("sekolah").innerText = p.get("sekolah");
-document.getElementById("jurusan").innerText = p.get("jurusan");
-document.getElementById("nomor").innerText = p.get("nomor");
-
-document.getElementById("foto").src = p.get("foto");
-
-// LOGO
-document.getElementById("logo1").src = "https://drive.google.com/uc?export=download&id=1UdJW2JnQRQmy2ZROZGfoZ5hUa-VJFFwm";
-document.getElementById("logo2").src = "https://drive.google.com/uc?export=download&id=1zP9m8KlOnrCmq5G7AGrIeKXu76JrzBNP";
+document.getElementById("nomor").innerText = url.get("nomor");
+document.getElementById("nama").innerText = url.get("nama");
+document.getElementById("ttl").innerText = url.get("ttl");
+document.getElementById("nisn").innerText = url.get("nisn");
+document.getElementById("nik").innerText = url.get("nik");
+document.getElementById("sekolah").innerText = url.get("sekolah");
+document.getElementById("jurusan").innerText = url.get("jurusan");
 </script>
 
 </body>
