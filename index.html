@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PPDB SMK PH</title>
+</head>
+<body>
+
+<h2>Form Pendaftaran</h2>
+
+<form id="form">
+  <input name="nama" placeholder="Nama"><br><br>
+  <input name="tempat" placeholder="Tempat Lahir"><br><br>
+  <input type="date" name="tanggal"><br><br>
+  <input name="nisn" placeholder="NISN"><br><br>
+  <input name="nik" placeholder="NIK"><br><br>
+  <input name="sekolah" placeholder="Asal Sekolah"><br><br>
+  <input name="wa" placeholder="No WA"><br><br>
+
+  <select name="jurusan">
+    <option>Manajemen Perkantoran</option>
+    <option>Teknik Ketenagalistrikan</option>
+    <option>Teknik Sepeda Motor</option>
+  </select><br><br>
+
+  <button type="submit">Daftar</button>
+</form>
+
+<script>
+document.getElementById("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const data = Object.fromEntries(new FormData(e.target));
+
+  const res = await fetch("/api/daftar", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(data)
+  });
+
+  alert("Pendaftaran berhasil!");
+});
+</script>
+
+</body>
+</html>

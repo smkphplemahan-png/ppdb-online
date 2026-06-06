@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu PPDB</title>
+
+  <style>
+    body { font-family: Arial; }
+
+    .card {
+      width: 700px;
+      border: 3px solid #0a7d3b;
+      padding: 20px;
+      background: #f5fff8;
+      margin: auto;
+      margin-top: 20px;
+    }
+
+    .header {
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .box {
+      border:1px solid #000;
+      padding:10px;
+      margin-top:10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="hasil"></div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+
+document.getElementById("hasil").innerHTML = `
+<div class="card">
+
+<div class="header">
+KARTU PENDAFTARAN<br>
+SMK PUTRA HARAPAN<br>
+2027/2028
+</div>
+
+<div class="box">
+Nomor: ${params.get("nomor")}<br>
+Nama: ${params.get("nama")}<br>
+TTL: ${params.get("tempat")}, ${params.get("tanggal")}<br>
+NISN: ${params.get("nisn")}<br>
+NIK: ${params.get("nik")}<br>
+Sekolah: ${params.get("sekolah")}<br>
+Jurusan: ${params.get("jurusan")}
+</div>
+
+</div>
+`;
+</script>
+
+</body>
+</html>
