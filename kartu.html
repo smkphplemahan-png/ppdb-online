@@ -1,63 +1,69 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Kartu PPDB</title>
+<body style="font-family:Arial; padding:20px">
 
-  <style>
-    body { font-family: Arial; }
+<div style="width:700px;border:3px solid #0a7d3b;padding:15px;background:#f5fff8">
 
-    .card {
-      width: 700px;
-      border: 3px solid #0a7d3b;
-      padding: 20px;
-      background: #f5fff8;
-      margin: auto;
-      margin-top: 20px;
-    }
+<table width="100%">
+<tr>
 
-    .header {
-      text-align: center;
-      font-weight: bold;
-      font-size: 18px;
-    }
+<td width="20%">
+<img src="{{logoDinas}}" width="80">
+</td>
 
-    .box {
-      border:1px solid #000;
-      padding:10px;
-      margin-top:10px;
-    }
-  </style>
-</head>
-
-<body>
-
-<div id="hasil"></div>
-
-<script>
-const params = new URLSearchParams(window.location.search);
-
-document.getElementById("hasil").innerHTML = `
-<div class="card">
-
-<div class="header">
-KARTU PENDAFTARAN<br>
-SMK PUTRA HARAPAN<br>
+<td align="center">
+<div style="font-size:24px;font-weight:bold;color:#0a7d3b">
+KARTU PENDAFTARAN
+</div>
+<div style="font-size:20px;font-weight:bold;color:#0a7d3b">
+SMK PUTRA HARAPAN
+</div>
+<div style="font-size:16px;color:#0a7d3b">
 2027/2028
 </div>
+</td>
 
-<div class="box">
-Nomor: ${params.get("nomor")}<br>
-Nama: ${params.get("nama")}<br>
-TTL: ${params.get("tempat")}, ${params.get("tanggal")}<br>
-NISN: ${params.get("nisn")}<br>
-NIK: ${params.get("nik")}<br>
-Sekolah: ${params.get("sekolah")}<br>
-Jurusan: ${params.get("jurusan")}
+<td width="20%" align="right">
+<img src="{{logoSekolah}}" width="80">
+</td>
+
+</tr>
+</table>
+
+<br>
+
+<table width="100%" border="1" cellpadding="10">
+<tr>
+
+<td width="70%">
+<b>No:</b> {{nomor}}<br><br>
+<b>Nama:</b> {{nama}}<br>
+<b>TTL:</b> {{ttl}}<br>
+<b>NISN:</b> {{nisn}}<br>
+<b>NIK:</b> {{nik}}<br>
+<b>Sekolah:</b> {{sekolah}}<br>
+<b>Jurusan:</b> {{jurusan}}
+</td>
+
+<td align="center">
+<div style="width:120px;height:150px;border:2px solid #000">
+FOTO
 </div>
+</td>
+
+</tr>
+</table>
+
+<br>
+
+<table width="100%">
+<tr>
+<td><img src="{{qr}}" width="120"></td>
+<td align="right"><b style="color:orange">Menunggu Verifikasi</b></td>
+</tr>
+</table>
 
 </div>
-`;
-</script>
 
 </body>
 </html>
